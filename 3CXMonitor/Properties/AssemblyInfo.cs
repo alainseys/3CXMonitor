@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TestCSharp")]
+[assembly: AssemblyTitle("3CXMonitor")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("3CX Ltd.")]
-[assembly: AssemblyProduct("3CX Phone System")]
-[assembly: AssemblyCopyright("Copyright © 3CX Ltd. 2008 - 2012")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("f67c3584-0673-45b3-9575-3200f55fdebf")]
+[assembly: Guid("f67c3584-0673-45b3-9575-3200f55fdeba")]
 
 // Version information for an assembly consists of the following four values:
 //

@@ -1,0 +1,1 @@
+Place in C:\Program Files\3CX Phone System\Instance1\Bin

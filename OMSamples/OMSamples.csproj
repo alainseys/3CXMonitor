@@ -80,8 +80,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="3cxpscomcpp2">
-      <HintPath>..\..\..\..\Program Files\3CX Phone System\Bin\3cxpscomcpp2.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\3CXMonitor\Packages\3cxpscomcpp2.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

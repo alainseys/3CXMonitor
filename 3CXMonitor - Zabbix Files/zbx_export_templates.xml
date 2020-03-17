@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>4.4</version>
+    <date>2020-03-18T10:47:35Z</date>
+    <groups>
+        <group>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>HTX - 3CX PBX</template>
+            <name>HTX - 3CX PBX</name>
+            <description>3CX PBX Template (https://www.3cx.com) monitors services are running. Do NOT put checks which are not unique to 3CX in this template.</description>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>3CX PABX - Agent</name>
+                </application>
+                <application>
+                    <name>3CX PABX - SNMP</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>3CX HTTP PBX WebUI</name>
+                    <type>SIMPLE</type>
+                    <key>net.tcp.service[http,,{$3CXHTTPWEBUI}]</key>
+                    <delay>30s</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>5000/tcp for HTTP WebUI. Ideally you would be using HTTPS to connect to the other one for securitry reasons of course.</description>
+                    <applications>
+                        <application>
+                            <name>3CX PABX - SNMP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last(0)}=0</expression>
+                            <name>{HOST.NAME} has no HTTP WebUI on TCP/{$3CXHTTPWEBUI}</name>
+                            <priority>AVERAGE</priority>
+                            <description>if port 5060/TCP is not open then we're not able to accept SIP so no PBX</description>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>3CX HTTPS PBX WebUI</name>
+                    <type>SIMPLE</type>
+                    <key>net.tcp.service[https,,{$3CXHTTPSWEBUI}]</key>
+                    <delay>30s</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>This checks the HTTPS WebUI is running on the 5001/tcp port. For checking you can actually browse to it, that would be a web scenario</description>
+                    <applications>
+                        <application>
+                            <name>3CX PABX - SNMP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last(0)}=0</expression>
+                            <name>{HOST.NAME} has no HTTPS WebUI on TCP/{$3CXHTTPSWEBUI}</name>
+                            <priority>AVERAGE</priority>
+                            <description>if port 5060/TCP is not open then we're not able to accept SIP so no PBX</description>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>3CX PBX TCP SIP Port</name>
+                    <type>SIMPLE</type>
+                    <key>net.tcp.service[tcp,,5060]</key>
+                    <delay>30s</delay>
+                    <description>5060/TCP is used for SIP connections. VOIP PBXs use this</description>
+                    <applications>
+                        <application>
+                            <name>3CX PABX - SNMP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last(0)}=0</expression>
+                            <name>{HOST.NAME} has no SIP Listener on TCP/5060</name>
+                            <priority>AVERAGE</priority>
+                            <description>if port TCP/5060 is not open then we're not able to accept SIP so no PBX</description>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>3CX UDP Tunnel Service</name>
+                    <type>SIMPLE</type>
+                    <key>net.tcp.service[tcp,,5090]</key>
+                    <delay>30s</delay>
+                    <description>UDP/5090 is used by 3CX Tunnel Broker so we need to monitor that</description>
+                    <applications>
+                        <application>
+                            <name>3CX PABX - SNMP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last(0)}=0</expression>
+                            <name>{HOST.NAME} has no 3CX Tunnel on UDP/5090</name>
+                            <priority>AVERAGE</priority>
+                            <description>if port UDP/5090 is not open then we're not able create a 3CX Tunnel and that's not good</description>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>Discover 3CX Extensions</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>3cx.discover.extensions</key>
+                    <delay>120</delay>
+                    <lifetime>10d</lifetime>
+                    <description>Discover 3CX Extensions available on local system.&#13;
+Rediscover every 15 minutes</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Extension Status {#EXT.NAME}</name>
+                            <type>ZABBIX_ACTIVE</type>
+                            <key>3cx.extension.status[{#EXT.NUMBER}]</key>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>Check extension status every 2 minutes</description>
+                            <applications>
+                                <application>
+                                    <name>3CX PABX - Agent</name>
+                                </application>
+                            </applications>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{str(Not Registered)}=1</expression>
+                                    <name>Extension {#EXT.NAME} Not Registered</name>
+                                    <priority>WARNING</priority>
+                                </trigger_prototype>
+                                <trigger_prototype>
+                                    <expression>{str(Removed)}=1</expression>
+                                    <name>Extension {#EXT.NAME} Removed</name>
+                                    <priority>WARNING</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Discover 3CX Trunks</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>3cx.discover.trunks</key>
+                    <delay>120</delay>
+                    <lifetime>10d</lifetime>
+                    <description>Discover 3CX Trunks available on local system.&#13;
+Rediscover every 15 minutes</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Trunk Status {#TRK.EXTERNALNUMBER}</name>
+                            <type>ZABBIX_ACTIVE</type>
+                            <key>3cx.extension.status[{#TRK.NUMBER}]</key>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>3CX PABX - Agent</name>
+                                </application>
+                            </applications>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{str(Not Registered)}=1</expression>
+                                    <name>Trunk {#TRK.EXTERNALNUMBER} Not Registered</name>
+                                    <priority>DISASTER</priority>
+                                </trigger_prototype>
+                                <trigger_prototype>
+                                    <expression>{str(Removed)}=1</expression>
+                                    <name>Trunk {#TRK.EXTERNALNUMBER} Removed</name>
+                                    <priority>DISASTER</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+            </discovery_rules>
+            <httptests>
+                <httptest>
+                    <name>3CX HTTPS PBX WebUI Availability</name>
+                    <agent>Links (2.8; Linux 3.13.0-36-generic x86_64; GNU C 4.8.2; text)</agent>
+                    <steps>
+                        <step>
+                            <name>{HOST.CONN} HTTPS Management Console</name>
+                            <url>https://{HOST.CONN}:5001/#/login</url>
+                            <required>3CX Phone System Management Console</required>
+                            <status_codes>200</status_codes>
+                        </step>
+                    </steps>
+                </httptest>
+            </httptests>
+            <macros>
+                <macro>
+                    <macro>{$3CXHTTPSWEBUI}</macro>
+                    <value>5001</value>
+                </macro>
+                <macro>
+                    <macro>{$3CXHTTPWEBUI}</macro>
+                    <value>5000</value>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+</zabbix_export>

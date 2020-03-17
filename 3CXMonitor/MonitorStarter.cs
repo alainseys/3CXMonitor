@@ -1,32 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Reflection;
-using TCX.Configuration;
 
-namespace OMSamples
+namespace PABXMonitor
 {
-   
-
     public static class SampleStarter
     {
-       
-
         static SampleStarter()
         {
-            
         }
 
-     
-
-        public static void StartSample(params string[] args)
+        public static void StartSample()
         {
-            
-            string sampleName = args[0].Trim().ToLowerInvariant();
             try
             {
-                
+                Console.WriteLine("Starting.");
+
+                Samples.DisplayAllSample.Run();
+
+                Console.WriteLine("Done.");
+
             }
             catch (TCX.Configuration.Exceptions.DNNameIsNotSpecified e)
             {
@@ -40,8 +31,8 @@ namespace OMSamples
             }
             catch (TCX.Configuration.Exceptions.ObjectSavingException e)
             {
-                //method Save() or Delete() can throw this exception in case if ObjectModel 
-                //can not save or delete object by some reason (constrait violation, or connection 
+                //method Save() or Delete() can throw this exception in case if ObjectModel
+                //can not save or delete object by some reason (constrait violation, or connection
                 //to configuration server is not available)
                 Console.WriteLine("Exception: " + e);
             }
@@ -54,6 +45,10 @@ namespace OMSamples
             {
                 //all other exceptions (runtime exceptions)
                 Console.WriteLine("Exception: " + e);
+            }
+            finally
+            {
+                Console.WriteLine("Done.");
             }
         }
     }
